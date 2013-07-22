@@ -16,7 +16,7 @@ Clone the code to your library directory (or add it as a submodule):
 	cd libraries
 	git clone git@github.com:housni/li3_uploadable.git
 
-If you plan to use the `Imagine` strategy, you also need to do:
+If you plan to use the [Imagine](https://github.com/avalanche123/Imagine) (by @avalanche123) strategy, you also need to do:
 
 	git submodule init && git submodule update
 
