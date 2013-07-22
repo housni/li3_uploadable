@@ -1,13 +1,16 @@
 <?php
+/**
+ * li3_uploadable: Upload files via $_POST
+ *
+ * @copyright     Copyright 2013, Housni Yakoob (http://koobi.co)
+ * @license       http://opensource.org/licenses/bsd-license.php The BSD License
+ */
 
 namespace li3_uploadable\extensions\data\behavior;
 
 use \li3_uploadable\extensions\storage\Uploadable as UploadableStorage;
 use lithium\util\String;
 use lithium\util\Validator;
-
-// @todo remove this
-use app\extensions\helper\Debug;
 
 class Uploadable extends \li3_behaviors\data\model\Behavior {
 

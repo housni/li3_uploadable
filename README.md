@@ -28,6 +28,7 @@ Include the library in in your `/app/config/bootstrap/libraries.php`
 
 ## Configuration
 
+	```php
 	<?php
 	/**
 	 * I usually put this in:
@@ -90,6 +91,7 @@ Include the library in in your `/app/config/bootstrap/libraries.php`
 		],
 	]);
 	?>
+	```
 
 
 
@@ -97,6 +99,7 @@ Include the library in in your `/app/config/bootstrap/libraries.php`
 The model below assumes you are accepting a `enctype="multipart/form-data"` form
 whose fields of names `directory` and `preview` accept files.
 
+	```php
 	<?php
 	/**
 	 * app/models/Theme.php
@@ -114,7 +117,7 @@ whose fields of names `directory` and `preview` accept files.
 				'fields' => [
 					'themeArchive' => 'directory',
 					'themePreview' => 'preview'
-				]
+				],
 				/**
 				 * You can override placeholders
 				 */
@@ -125,14 +128,17 @@ whose fields of names `directory` and `preview` accept files.
 		];
 	}
 	?>
+	```
 
 In your views:
 
+	```php
 	// This will output the text value stored in themes.directory
 	<?= $theme->directory; ?>
 
-	// This will output the 250 x 250px thumb_preview.png image
+	// This will output the 250 x 250px thumb_preview.png url
 	<img src="<?= $theme->preview->url('thumb'); ?>" alt="Preview of theme">
+	```
 
 
 
@@ -142,9 +148,9 @@ Look at `app/config/bootstrap/validators.php`
 
 
 ## More Adapter => Strategy
-- [ ] MP3 => ID3
-- [ ] Vide => FFmpeg
-- [ ] PDF => wkhtmltopdf
+* MP3 => ID3
+* Vide => FFmpeg
+* PDF => wkhtmltopdf
 
 
 

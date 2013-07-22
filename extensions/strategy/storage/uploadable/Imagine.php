@@ -14,10 +14,6 @@ use Imagine as ImagineLib;
 use li3_uploadable\extensions\storage\Uploadable;
 use li3_uploadable\extensions\adapter\storage\uploadable\File;
 
-
-// @todo remove this
-use app\extensions\helper\Debug;
-
 class Imagine extends \lithium\core\Object {
 
 	/**

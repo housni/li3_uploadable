@@ -12,9 +12,6 @@ use Closure;
 use InvalidArgumentException;
 use li3_uploadable\extensions\storage\Uploadable;
 
-// @todo remove this
-use app\extensions\helper\Debug;
-
 class CompressionArchive extends \li3_uploadable\extensions\adapter\storage\Uploadable {
 
 	protected $_processors = ['extract'];
@@ -26,7 +23,7 @@ class CompressionArchive extends \li3_uploadable\extensions\adapter\storage\Uplo
 	 * As for the security issue, validation should be used to check if a file
 	 * is, in fact, an uploaded file. Custom validation for this is provided
 	 * in app/config/bootstrap/validators.php
- 	 *
+	 *
 	 * @param  [type] $source      [description]
 	 * @param  [type] $destination [description]
 	 * @param  [type] $options     [description]

@@ -1,4 +1,10 @@
 <?php
+/**
+ * li3_uploadable: Upload files via $_POST
+ *
+ * @copyright     Copyright 2013, Housni Yakoob (http://koobi.co)
+ * @license       http://opensource.org/licenses/bsd-license.php The BSD License
+ */
 
 namespace li3_uploadable\extensions\strategy\storage\uploadable;
 
@@ -8,10 +14,6 @@ use lithium\util\String;
 use li3_uploadable\extensions\storage\Uploadable;
 use li3_uploadable\extensions\adapter\storage\uploadable\File;
 
-
-// @todo remove this
-use app\extensions\helper\Debug;
-
 class ZipArchive extends \lithium\core\Object {
 
 	public function extract($source, $destination) {
@@ -20,7 +22,7 @@ class ZipArchive extends \lithium\core\Object {
 		if ($zip->open($source) !== true) {
 			return false;
 		}
-	    $zip->extractTo($destination);
+		$zip->extractTo($destination);
 		$zip->close();
 
 		return compact('source', 'destination');

@@ -19,7 +19,7 @@ class File extends \li3_uploadable\extensions\adapter\storage\Uploadable {
 	 * As for the security issue, validation should be used to check if a file
 	 * is, in fact, an uploaded file. Custom validation for this is provided
 	 * in app/config/bootstrap/validators.php
- 	 *
+	 *
 	 * @param  [type] $source      [description]
 	 * @param  [type] $destination [description]
 	 * @param  [type] $options     [description]
