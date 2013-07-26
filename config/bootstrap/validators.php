@@ -25,14 +25,17 @@ use lithium\core\ConfigException;
  * }}}
  */
 Validator::add('isUploadedFile', function($value, $rule, $options) {
-	if (isset($options['skipEmpty']) && $options['skipEmpty'] === true) {
-		return true;
-	}
-
 	$defaults = [
+		'skipEmpty' => false,
+		'required' => true,
 		'validateInCli' => false
 	];
 	$options += $defaults;
+
+	if ($options['skipEmpty'] === true || $options['required'] === false) {
+		return true;
+	}
+
 	if (!$options['validateInCli'] && PHP_SAPI === 'cli') {
 		return true;
 	}
@@ -60,14 +63,18 @@ Validator::add('isUploadedFile', function($value, $rule, $options) {
  * }}}
  */
 Validator::add('uploadedFileSize', function($value, $rule, $options) {
-	if (isset($options['skipEmpty']) && $options['skipEmpty'] === true) {
+	$defaults = [
+		'skipEmpty' => false,
+		'required' => true,
+		'validateInCli' => false,
+		'in' => []
+	];
+	$options += $defaults;
+
+	if ($options['skipEmpty'] === true || $options['required'] === false) {
 		return true;
 	}
 
-	$defaults = [
-		'validateInCli' => false
-	];
-	$options += $defaults;
 	if (!$options['validateInCli'] && PHP_SAPI === 'cli') {
 		return true;
 	}
@@ -125,15 +132,17 @@ Validator::add('uploadedFileSize', function($value, $rule, $options) {
  * }}}
  */
 Validator::add('allowedFileType', function($value, $rule, $options) {
-	if (isset($options['skipEmpty']) && $options['skipEmpty'] === true) {
+	$defaults = [
+		'skipEmpty' => false,
+		'required' => true,
+		'validateInCli' => false,
+	];
+	$options += $defaults;
+
+	if ($options['skipEmpty'] === true || $options['required'] === false) {
 		return true;
 	}
 
-
-	$defaults = [
-		'validateInCli' => false
-	];
-	$options += $defaults;
 	if (!$options['validateInCli'] && PHP_SAPI === 'cli') {
 		return true;
 	}
