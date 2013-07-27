@@ -55,6 +55,9 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 				$params['entity']->set($data);
 
 				$entity = $params['entity'];
+				$entityData['model'] = $entity->model();
+				$entityData['data'] = $entity->data();
+
 				if (!isset($configs['placeholders'])) {
 					$configs['placeholders'] = [];
 				}
@@ -81,16 +84,18 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 							// We delete the old file
 							$oldFile = $entity->export()['data'][$field];
 							$removeOptions['placeholders'] = UploadableStorage::placeholders(
-								$oldFile, $entity,
-								$configs['placeholders'] + ['field' => $field]
+								$oldFile,
+								$configs['placeholders'] + ['field' => $field],
+								$entityData
 							);
 
 							$removePath = UploadableStorage::interpolate($settings['remove'], $removeOptions);
 							UploadableStorage::remove($removePath, $removeOptions + ['name' => $name]);
 
 							$options['placeholders'] = UploadableStorage::placeholders(
-								$newFile, $entity,
-								$configs['placeholders'] + ['field' => $field]
+								$newFile,
+								$configs['placeholders'] + ['field' => $field],
+								$entityData
 							);
 							$destination[$field] = UploadableStorage::interpolate($path, $options);
 
@@ -113,8 +118,9 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 						}
 					} else {
 						$options['placeholders'] = UploadableStorage::placeholders(
-							$newFile, $entity,
-							$configs['placeholders'] + ['field' => $field]
+							$newFile,
+							$configs['placeholders'] + ['field' => $field],
+							$entityData
 						);
 						$fieldValue = static::fieldValue($path, $options['placeholders']);
 						$destination[$field] = UploadableStorage::interpolate($path, $options);
@@ -164,6 +170,9 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 
 			$model::applyFilter('delete', function($self, $params, $chain) use ($behavior) {
 				$entity = $params['entity'];
+				$entityData['model'] = $entity->model();
+				$entityData['data'] = $entity->data();
+
 				$configs = $behavior->_config;
 				$fields = $behavior::_formattedFields($configs['fields']);
 				if (!isset($configs['placeholders'])) {
@@ -175,8 +184,9 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 					$path = UploadableStorage::config($name)['remove'];
 					$existingFile = $entity->export()['data'][$field];
 					$options['placeholders'] = UploadableStorage::placeholders(
-						$existingFile, $entity,
-						$configs['placeholders'] + ['field' => $field]
+						$existingFile,
+						$configs['placeholders'] + ['field' => $field],
+						$entityData
 					);
 					$destination = UploadableStorage::interpolate($path, $options);
 

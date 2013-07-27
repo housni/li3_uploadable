@@ -36,13 +36,20 @@ class Uploadable extends \lithium\core\Adaptable {
 	protected static $_strategies = 'strategy.storage.uploadable';
 
 	protected $_field = null;
-	protected $_entity = null;
+
+	protected $_data = null;
+	public $_export = null;
+	protected $_model = null;
+
+
 	protected $_name = null;
 
 	public function __construct($field, $name, $entity) {
 		$this->_field = $field;
 		$this->_name = $name;
-		$this->_entity = $entity;
+		$this->_data = $entity->data();
+		$this->_export = $entity->export()['data'];
+		$this->_model = $entity->model();
 	}
 
 	public static function config($config = null) {
@@ -128,11 +135,11 @@ class Uploadable extends \lithium\core\Adaptable {
 	 */
 	public function __toString() {
 		$field = $this->_field;
-		$exported = $this->_entity->export();
-		if (!isset($exported['data'][$field])) {
+		$exportedData = $this->_export;
+		if (!isset($exportedData[$field])) {
 			return '';
 		}
-		$return = $exported['data'][$field];
+		$return = $exportedData[$field];
 
 		if (!is_string($return)) {
 			return '';
@@ -154,7 +161,7 @@ class Uploadable extends \lithium\core\Adaptable {
 		$name = $this->_name;
 		$settings = static::config($name);
 		$url = $settings['url'];
-		$data = $this->_entity->data();
+		$data = $this->_data;
 
 		$field = $this->_field;
 		$fileName = $data[$field];
@@ -167,7 +174,9 @@ class Uploadable extends \lithium\core\Adaptable {
 			$fileName = end($fileParts);
 		}
 
-		$options['placeholders'] = static::placeholders($fileName, $this->_entity, ['field' => $field]);
+		$params['model'] = $this->_model;
+		$params['data'] = $this->_data;
+		$options['placeholders'] = static::placeholders($fileName, ['field' => $field], $params);
 		$url = String::insert($url, $options['placeholders']);
 
 		$options += compact('key');
@@ -194,16 +203,16 @@ class Uploadable extends \lithium\core\Adaptable {
 	 *                            this method.
 	 * @return array An array of placeholders.
 	 */
-	public static function placeholders($file, $entity = null, array $placeholders = []) {
+	public static function placeholders($file, array $placeholders = [], array $options = []) {
 		$info = pathinfo($file);
 
-		$modelNamespace = $entity->model();
+		$modelNamespace = $options['model'];
 		$modelSplit = explode('\\', $modelNamespace);
 		$model = strtolower(end($modelSplit));
 
 		$data = [];
-		if (!is_null($entity)) {
-			$data = $entity->data();
+		if (!is_null($options['data'])) {
+			$data = $options['data'];
 		}
 
 		$basename = $info['filename'];
