@@ -21,9 +21,11 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 		$options += $defaults;
 
 		foreach ($fields as $field => $name) {
-			$file = $_FILES[$field]['name'];
-			if (!Validator::rule('isUploadedFile', $file, $options['format'], ['field' => $field])) {
-				unset($data[$field]);
+			if (isset($_FILES[$field]['name'])) {
+				$file = $_FILES[$field]['name'];
+				if (!Validator::rule('isUploadedFile', $file, $options['format'], ['field' => $field])) {
+					unset($data[$field]);
+				}
 			}
 		}
 
