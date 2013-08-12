@@ -70,63 +70,68 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 				];
 
 				$skip = [];
+				$fieldCount = 0;
 				foreach ($fields as $field => $name) {
-					$configName[$field] = $name;
-					$source[$field] = $_FILES[$field]['tmp_name'];
-					$settings = UploadableStorage::config($name);
-					$settings += $defaults;
+					if (isset($_FILES[$field])) {
+						$configName[$field] = $name;
+						$source[$field] = $_FILES[$field]['tmp_name'];
+						$settings = UploadableStorage::config($name);
+						$settings += $defaults;
 
-					$path = $settings['save'];
-					$newFile = $_FILES[$field]['name'];
+						$path = $settings['save'];
+						$newFile = $_FILES[$field]['name'];
 
-					if ($entity->exists()) {
-						if (!$entity->modified($field)) {
-							$skip[$field] = true;
+						if ($entity->exists()) {
+							if (!$entity->modified($field)) {
+								$skip[$field] = true;
+							} else {
+								// We delete the old file
+								$oldFile = $entity->export()['data'][$field];
+								$removeOptions['placeholders'] = UploadableStorage::placeholders(
+									$oldFile,
+									$configs['placeholders'] + ['field' => $field],
+									$entityData
+								);
+
+								$removePath = UploadableStorage::interpolate($settings['remove'], $removeOptions);
+								UploadableStorage::remove($removePath, $removeOptions + ['name' => $name]);
+
+								$options['placeholders'] = UploadableStorage::placeholders(
+									$newFile,
+									$configs['placeholders'] + ['field' => $field],
+									$entityData
+								);
+								$destination[$field] = UploadableStorage::interpolate($path, $options);
+
+								/**
+								 * The field has been modified to now contain 'null' so we
+								 * remove the field from the config so that, later on, we don't
+								 * try to upload a non-existent file later.
+								 */
+								if (null === $entity->$field) {
+									$params['entity']->$field = null;
+									unset($configs['fields'][$field]);
+								} else {
+									/**
+									 * the field has been modified but it contains a value
+									 * so we must upload the new one.
+									 */
+									$fieldValue = static::fieldValue($path, $options['placeholders']);
+									$params['entity']->$field = $fieldValue;
+								}
+							}
 						} else {
-							// We delete the old file
-							$oldFile = $entity->export()['data'][$field];
-							$removeOptions['placeholders'] = UploadableStorage::placeholders(
-								$oldFile,
-								$configs['placeholders'] + ['field' => $field],
-								$entityData
-							);
-
-							$removePath = UploadableStorage::interpolate($settings['remove'], $removeOptions);
-							UploadableStorage::remove($removePath, $removeOptions + ['name' => $name]);
-
 							$options['placeholders'] = UploadableStorage::placeholders(
 								$newFile,
 								$configs['placeholders'] + ['field' => $field],
 								$entityData
 							);
+							$fieldValue = static::fieldValue($path, $options['placeholders']);
 							$destination[$field] = UploadableStorage::interpolate($path, $options);
-
-							/**
-							 * The field has been modified to now contain 'null' so we
-							 * remove the field from the config so that, later on, we don't
-							 * try to upload a non-existent file later.
-							 */
-							if (null === $entity->$field) {
-								$params['entity']->$field = null;
-								unset($configs['fields'][$field]);
-							} else {
-								/**
-								 * the field has been modified but it contains a value
-								 * so we must upload the new one.
-								 */
-								$fieldValue = static::fieldValue($path, $options['placeholders']);
-								$params['entity']->$field = $fieldValue;
-							}
+							$params['entity']->$field = $fieldValue;
 						}
 					} else {
-						$options['placeholders'] = UploadableStorage::placeholders(
-							$newFile,
-							$configs['placeholders'] + ['field' => $field],
-							$entityData
-						);
-						$fieldValue = static::fieldValue($path, $options['placeholders']);
-						$destination[$field] = UploadableStorage::interpolate($path, $options);
-						$params['entity']->$field = $fieldValue;
+						$fieldCount++;
 					}
 				}
 
@@ -135,6 +140,9 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 				}
 
 				$saved = $chain->next($self, $params, $chain);
+				if ($fieldCount == count($fields)) {
+					return $saved;
+				}
 
 				$options['placeholders'] += $params['entity']->data();
 
