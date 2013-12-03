@@ -1,0 +1,13 @@
+{
+    "name": "housni/li3_uploadable",
+    "type": "lithium-library",
+    "description": "This plugin will upload files via HTTP POST uploads only since it relies on $_FILES to get the source path.",
+    "keywords": ["php", "model", "behavior", "lithium", "li3"],
+    "homepage": "https://github.com/housni/li3_uploadable",
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4",
+        "composer/installers": "dev-master",
+        "imagine/imagine"
+    }
+}
