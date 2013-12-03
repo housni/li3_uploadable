@@ -8,6 +8,6 @@
     "require": {
         "php": ">=5.4",
         "composer/installers": "dev-master",
-        "imagine/imagine"
+        "imagine/imagine": "dev-master"
     }
 }
