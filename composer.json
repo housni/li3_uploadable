@@ -8,6 +8,7 @@
     "require": {
         "php": ">=5.4",
         "composer/installers": "dev-master",
-        "imagine/imagine": "dev-master"
+        "imagine/imagine": "dev-master",
+        "jails/li3_behaviors": "dev-master"
     }
 }
