@@ -37,10 +37,10 @@ class File extends \li3_uploadable\extensions\adapter\storage\Uploadable {
 		});
 	}
 
-	public function remove(array $files) {
+	public function remove($files) {
 		return function($self, $params) use ($files) {
 			$result = [];
-			foreach ($files as $file) {
+			foreach ((array) $files as $file) {
 				$result[] = static::_remove($file);
 			}
 			return !in_array(false, $result, true);

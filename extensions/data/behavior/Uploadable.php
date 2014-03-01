@@ -53,6 +53,11 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 				$source = $destination = $configName = [];
 
 				$data = $behavior::_modified($params['data'], $fields);
+
+				if (empty($data)) {
+					return true;
+				}
+
 				$params['data'] = [];
 				$params['entity']->set($data);
 

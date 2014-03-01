@@ -152,4 +152,46 @@ Validator::add('allowedFileType', function($value, $rule, $options) {
 		'list' => $options['allowed']
 	]);
 });
+
+/**
+ * Checks to see if image dimensions are valid.
+ * Both, width and height, are optional and will only be checked against if they are specified.
+ *
+ * In your model:
+ * {{{
+ * public $validates = [
+ *     'avatar' => [
+ *         [
+ *		'dimensions',
+ *		'width' => 45,
+ *		'height' => 45,
+ *		'message'   => 'The image dimensions must be 45 x 45'
+ *         ]
+ *     ]
+ * ];
+ * }}}
+ */
+Validator::add('dimensions', function($value, $rule, $options) {
+	$status = [];
+	$field = $options['field'];
+
+	if ($options['required'] && empty($_FILES[$field]['tmp_name'])) {
+		return false;
+	}
+
+	if ($options['skipEmpty'] && empty($_FILES[$field]['tmp_name'])) {
+		return true;
+	}
+
+	list($width, $height, $type, $attr) = getimagesize($_FILES[$field]['tmp_name']);
+
+	if (isset($options['width']) && $width !== $options['width']) {
+		$status[] = false;
+	}
+
+	if (isset($options['height']) && $height !== $options['height']) {
+		$status[] = false;
+	}
+	return !in_array(false, $status, true);
+});
 ?>
