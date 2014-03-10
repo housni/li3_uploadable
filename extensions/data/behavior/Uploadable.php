@@ -44,7 +44,6 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 		if ($model = $this->_model) {
 			$behavior = $this;
 			$model::applyFilter('save', function($self, $params, $chain) use ($behavior) {
-
 				$options = [
 					'placeholders' => []
 				];
@@ -56,6 +55,11 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 
 				if (empty($data)) {
 					return true;
+				}
+
+				$queried = $params['entity']->export()['data'];
+				if (0 === count(array_intersect_key($queried, $fields))) {
+					return $chain->next($self, $params, $chain);
 				}
 
 				$params['data'] = [];
@@ -222,6 +226,10 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 
 	protected function _assignAccessors($entity) {
 		$fields = static::_formattedFields($this->_config['fields']);
+		$queried = $entity->export()['data'];
+		if (0 === count(array_intersect_key($queried, $fields))) {
+			return $entity;
+		}
 
 		foreach ($fields as $field => $name) {
 			if (isset($_FILES[$field]['name'])) {
