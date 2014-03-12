@@ -23,6 +23,8 @@ use lithium\core\ConfigException;
  *     ]
  * ];
  * }}}
+ *
+ * If the field is set to `null`, this means the user intends to delete it so it would return `true`.
  */
 Validator::add('isUploadedFile', function($value, $rule, $options) {
 	$defaults = [
@@ -37,6 +39,10 @@ Validator::add('isUploadedFile', function($value, $rule, $options) {
 	}
 
 	if (!$options['validateInCli'] && PHP_SAPI === 'cli') {
+		return true;
+	}
+
+	if (!isset($_FILES[$options['field']]['error']) && null === $_FILES[$options['field']]) {
 		return true;
 	}
 
@@ -61,6 +67,8 @@ Validator::add('isUploadedFile', function($value, $rule, $options) {
  *     ]
  * ];
  * }}}
+ *
+ * If the field is set to `null`, this means the user intends to delete it so it would return `true`.
  */
 Validator::add('uploadedFileSize', function($value, $rule, $options) {
 	$defaults = [
@@ -98,6 +106,9 @@ Validator::add('uploadedFileSize', function($value, $rule, $options) {
 		throw new ConfigException("Invalid unit `{$unit}` for size.");
 	}
 
+	if (!isset($_FILES[$options['field']]['error']) && null === $_FILES[$options['field']]) {
+		return true;
+	}
 	$uploaded = $_FILES[$options['field']];
 
 	list($lowerBound, $upperBound) = $in;
@@ -130,6 +141,8 @@ Validator::add('uploadedFileSize', function($value, $rule, $options) {
  *     ]
  * ];
  * }}}
+ *
+ * If the field is set to `null`, this means the user intends to delete it so it would return `true`.
  */
 Validator::add('allowedFileType', function($value, $rule, $options) {
 	$defaults = [
@@ -144,6 +157,10 @@ Validator::add('allowedFileType', function($value, $rule, $options) {
 	}
 
 	if (!$options['validateInCli'] && PHP_SAPI === 'cli') {
+		return true;
+	}
+
+	if (!isset($_FILES[$options['field']]['error']) && null === $_FILES[$options['field']]) {
 		return true;
 	}
 
@@ -170,6 +187,8 @@ Validator::add('allowedFileType', function($value, $rule, $options) {
  *     ]
  * ];
  * }}}
+ *
+ * If the field is set to `null`, this means the user intends to delete it so it would return `true`.
  */
 Validator::add('dimensions', function($value, $rule, $options) {
 	$status = [];
@@ -180,6 +199,10 @@ Validator::add('dimensions', function($value, $rule, $options) {
 	}
 
 	if ($options['skipEmpty'] && empty($_FILES[$field]['tmp_name'])) {
+		return true;
+	}
+
+	if (!isset($_FILES[$options['field']]['error']) && null === $_FILES[$options['field']]) {
 		return true;
 	}
 

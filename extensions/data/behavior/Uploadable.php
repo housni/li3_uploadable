@@ -21,14 +21,13 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 		$options += $defaults;
 
 		foreach ($fields as $field => $name) {
-			if (isset($_FILES[$field]['name'])) {
-				$file = $_FILES[$field]['name'];
+			if (isset($data[$field]['name'])) {
+				$file = $data[$field]['name'];
 				if (!Validator::rule('isUploadedFile', $file, $options['format'], ['field' => $field])) {
 					unset($data[$field]);
 				}
 			}
 		}
-
 		return $data;
 	}
 
@@ -53,8 +52,9 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 
 				$data = $behavior::_modified($params['data'], $fields);
 
-				if (empty($data)) {
-					return true;
+				$dataKeys = array_keys($data);
+				if (empty($dataKeys)) {
+					return $chain->next($self, $params, $chain);
 				}
 
 				$queried = $params['entity']->export()['data'];
@@ -81,7 +81,7 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 				$skip = [];
 				$fieldCount = 0;
 				foreach ($fields as $field => $name) {
-					if (isset($_FILES[$field])) {
+					if (array_key_exists($field, $data)) {
 						$configName[$field] = $name;
 						$source[$field] = $_FILES[$field]['tmp_name'];
 						$settings = UploadableStorage::config($name);
@@ -104,6 +104,11 @@ class Uploadable extends \li3_behaviors\data\model\Behavior {
 
 								$removePath = UploadableStorage::interpolate($settings['remove'], $removeOptions);
 								UploadableStorage::remove($removePath, $removeOptions + ['name' => $name]);
+
+								if (null === $data[$field]) {
+									$skip[$field] = true;
+									continue;
+								}
 
 								$options['placeholders'] = UploadableStorage::placeholders(
 									$newFile,
